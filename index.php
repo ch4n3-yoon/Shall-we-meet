@@ -6,6 +6,7 @@ require_once 'lib.php';
 require_once 'metro.php';
 require_once 'env.php';
 
+$appkey = '9edfd445d55cc9c2ca654d5c2a2717cb';
 // 전달된 위치가 없으면 setPoint.php 로 이동
 $array = $_REQUEST['addr'];
 if (!isset($array))
@@ -33,8 +34,9 @@ eval($code);
 <head>
     <meta charset="UTF-8">
     <title>ㅇㄷ로가?</title>
-    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=<?php echo $clientId; ?>&submodules=geocoder"></script>
-    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=<?php echo $clientId; ?>&submodules=drawing"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<!--    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=--><?php //echo $clientId; ?><!--&submodules=geocoder"></script>-->
+<!--    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=--><?php //echo $clientId; ?><!--&submodules=drawing"></script>-->
     <style>
         .container {
             width: 88%;
@@ -57,6 +59,11 @@ eval($code);
             text-align: center;
             text-decoration-style: double;
 
+        }
+
+        #map {
+            width: 100%;
+            height: 30em;
         }
 
     </style>
@@ -96,9 +103,10 @@ eval($code);
     </p>
     <br>
 
-    <div id="map" style="width:100%;height:400px;"></div>
+    <div id="map"></div>
     <br>
 </div>
+<!--
 <script type="text/javascript">
 
     let map = new naver.maps.Map('map', {
@@ -177,6 +185,52 @@ eval($code);
 
     drawingManager.addDrawing(polygon, naver.maps.drawing.DrawingMode.POLYGON);
 
+</script> -->
+
+<script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=<?php echo $appkey; ?>&libraries=services"></script>
+<script type="text/javascript">
+    let mapContainer = document.getElementById('map'), // 지도를 표시할 div
+        mapOption = {
+            center: new daum.maps.LatLng(<?php echo $promisePoint['x'] . ', ' . $promisePoint['y']; ?>), // 지도의 중심좌표
+            level: 3 // 지도의 확대 레벨
+        };
+
+    // 지도를 생성합니다
+    let map = new daum.maps.Map(mapContainer, mapOption);
+
+    // 주소-좌표 변환 객체를 생성합니다
+    let geocoder = new daum.maps.services.Geocoder();
+
+    /*
+    let marker = new daum.maps.Marker(), // 클릭한 위치를 표시할 마커입니다
+        infowindow = new daum.maps.InfoWindow({zindex:1}); // 클릭한 위치에 대한 주소를 표시할 인포윈도우입니다
+    // 현재 지도 중심좌표로 주소를 검색해서 지도 좌측 상단에 표시합니다
+    searchAddrFromCoords(map.getCenter(), displayCenterInfo);*/
+
+    // 주소로 좌표를 검색합니다
+    geocoder.addressSearch('<?php echo pointToAddress($promisePoint); ?>', function(result, status) {
+
+        // 정상적으로 검색이 완료됐으면
+        if (status === daum.maps.services.Status.OK) {
+
+            var coords = new daum.maps.LatLng(result[0].y, result[0].x);
+
+            // 결과값으로 받은 위치를 마커로 표시합니다
+            var marker = new daum.maps.Marker({
+                map: map,
+                position: coords
+            });
+
+            // 인포윈도우로 장소에 대한 설명을 표시합니다
+            var infowindow = new daum.maps.InfoWindow({
+                content: '<div style="width:150px;text-align:center;padding:6px 0;">여기서만나!</div>'
+            });
+            infowindow.open(map, marker);
+
+            // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+            map.setCenter(coords);
+        }
+    });
 </script>
 </body>
 </html>
