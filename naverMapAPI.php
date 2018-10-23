@@ -4,6 +4,7 @@ require_once 'env.php';
 
 function pointToAddress($point)
 {
+    global $clientId, $clientSecret;
 
     $x = $point['x'];
     $y = $point['y'];
@@ -41,6 +42,8 @@ function pointToAddress($point)
 
 function addressToPoint($address)
 {
+    global $clientId, $clientSecret;
+
     $encText = urlencode($address);
     $url = "https://openapi.naver.com/v1/map/geocode?query=" . $encText; // json
     // $url = "https://openapi.naver.com/v1/map/geocode.xml?query=".$encText; // xml
