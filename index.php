@@ -8,8 +8,8 @@ require_once 'env.php';
 
 $appkey = '9edfd445d55cc9c2ca654d5c2a2717cb';
 // 전달된 위치가 없으면 setPoint.php 로 이동
-$array = $_REQUEST['addr'];
-if (!isset($array))
+$addresses = $_REQUEST['addr'];
+if (!isset($addresses))
 {
     header('Location: /map/setPoint.php');
 }
@@ -19,7 +19,7 @@ if (!isset($array))
 $code = "\$promisePoint = getPromisePoint(";
 
 $points = [];
-foreach ($array as $key => $val) {
+foreach ($addresses as $key => $val) {
     if (strlen($val) != 0)
         $points[] = "addressToPoint('" . sanity_check($val) . "')";
 }
@@ -34,26 +34,35 @@ eval($code);
 <head>
     <meta charset="UTF-8">
     <title>ㅇㄷ로가?</title>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
-<!--    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=--><?php //echo $clientId; ?><!--&submodules=geocoder"></script>-->
-<!--    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=--><?php //echo $clientId; ?><!--&submodules=drawing"></script>-->
+
+    <script src="//cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <!--    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=--><?php //echo $clientId; ?><!--&submodules=geocoder"></script>-->
+    <!--    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=--><?php //echo $clientId; ?><!--&submodules=drawing"></script>-->
     <style>
-        .container {
+        .container_local {
             width: 88%;
             margin: 0 auto;
             margin-top: 1em;
-            margin-bottom: 1em;
+            margin-bottom: 20em;
+        }
+
+        .rainbow {
+            background-image: -webkit-gradient( linear, left top, right top, color-stop(0, #f22), color-stop(0.15, #f2f), color-stop(0.3, #22f), color-stop(0.45, #2ff), color-stop(0.6, #2f2),color-stop(0.75, #2f2), color-stop(0.9, #ff2), color-stop(1, #f22) );
+            background-image: gradient( linear, left top, right top, color-stop(0, #f22), color-stop(0.15, #f2f), color-stop(0.3, #22f), color-stop(0.45, #2ff), color-stop(0.6, #2f2),color-stop(0.75, #2f2), color-stop(0.9, #ff2), color-stop(1, #f22) );
+            color:transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
         }
 
         .header {
-            top: 32%;
-            position: relative;
-            margin-top: 1em;
-            margin-bottom: 1em;
-            padding-top: 1em;
-            padding-bottom: 1em;
-            background-color: #96dd3b;
-            background-size:cover;
+            margin-top: 3em;
+            margin-bottom: 3em;
+            color: red;
+            color: -webkit-linear-gradient(left,red,orange,yellow,green,blue,indigo,violet);
+            color: -o-linear-gradient(left,red,orange,yellow,green,blue,indigo,violet);
+            color: -moz-linear-gradient(left,red,orange,yellow,green,blue,indigo,violet);
+            color: linear-gradient(to right, red,orange,yellow,green,blue,indigo,violet);
         }
 
         .title {
@@ -65,7 +74,7 @@ eval($code);
 
         #map {
             width: 100%;
-            height: 30em;
+            height: 40em;
             position:relative;
             overflow:hidden;
         }
@@ -97,23 +106,103 @@ eval($code);
         .placeinfo .tel {color:#0f7833;}
         .placeinfo .jibun {color:#999;font-size:11px;margin-top:0;}
 
+        ::selection {
+            background: rgb(182,223,241);
+            color: inherit;
+            text-shadow: none;
+        }
+        ::-moz-selection {
+            background: rgb(182,223,241);
+            color: inherit;
+            text-shadow: none;
+        }
+        ::-webkit-selection {
+            background: rgb(182,223,241);
+            color: inherit;
+            text-shadow: none;
+        }
+        
+        .gungseo {
+            font-family: '궁서';
+            font-size: 2em;
+        }
+
+
+        .menu {
+            position: -webkit-sticky; /* Safari */
+            position: sticky;
+            top: 0;
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        .active {
+            background-color: #4CAF50;
+        }
+
+
+        .nav-li {
+            float: left;
+        }
+
+        .nav-li a.nav-a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        /* Change the link color to #111 (black) on hover */
+        .nav-li a.nav-a:hover {
+            background-color: #111;
+        }
+
+        .print-points {
+            margin-top: 3em;
+        }
+
+        .white-font {
+            color: white;
+        }
+
     </style>
-    <?php require_once 'bootstrap.php'; ?>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css">
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 </head>
 <body>
-<div class="container">
+<div class="container_local">
+
+
     <div class="header">
-        <h1 class="title">어디로가?</h1>
+        <h1 align="center"><b class="rainbow gungseo">어디로가 써-비쓰</b></h1>
     </div>
 
-    <p>
-        <strong>
-            <?php
-            $array = $_REQUEST['addr'];
-            echo join(',', $array);
-            ?>
-        </strong> 사이의 만날 장소
-    </p>
+    <ul class="menu" style="z-index: 1;">
+        <li class="nav-li active"><a class="nav-a" href="default.asp">어디로가?</a></li>
+        <li class="nav-li"><a class="nav-a" href="news.asp">설립 이념</a></li>
+        <li class="nav-li"><a class="nav-a" href="contact.asp">알고리즘</a></li>
+        <li class="nav-li"><a class="nav-a" href="https://www.gg.go.kr/humanrights">경기도민 인권 향상을 위한 발악</a></li>
+    </ul>
+
+    <div class="print-points">
+        <?php
+        $array = $_REQUEST['addr'];
+        for ($i = 0; $i < count($array); $i++)
+        {
+            echo "<a class=\"waves-effect waves-light btn white\">{$array[$i]}</a>&nbsp;";
+//            echo "<a class=\"btn-floating btn-large waves-effect waves-light red\">{$array[$i]}</a>&nbsp;";
+        }
+        ?>
+        사이의 만날 장소
+    </div>
 
 
 
@@ -122,40 +211,42 @@ eval($code);
     //$closeStationPoint = point($closeStation['ypoint_wgs'], $closeStationPoint['xpoint_wgs']);
     $closeStationPoint = Array('x' => $closeStation['ypoint_wgs'], 'y' => $closeStation['xpoint_wgs']);
     ?>
-    <p>
-        만날 주소 : <?php echo pointToAddress($promisePoint); ?>
-    </p>
-    <p>
+    <div class="print-points">
+        만날 주소 : <a class="waves-effect waves-light btn" style="color: white; z-index: 5;"><?php echo pointToAddress($promisePoint); ?></a>
+        (<?php echo $promisePoint['y'] . ', ' . $promisePoint['x']; ?>)
+        <br><br>
         가장 가까운 역 : <?php echo $closeStation['line_num'] ?>(호)선
         <?php echo getCloseStation($promisePoint)['station_nm']; ?>역
         <!-- (<?php echo $closeStationPoint['x'] . ',' . $closeStationPoint['y']; ?>) -->
-    </p>
+    </div>
+    <br>
+
     <br>
 
     <div class="map_wrap">
         <div id="map"></div>
         <ul id="category">
-            <li id="BK9" data-order="0">
+            <li id="BK9" data-order="0" class="category">
                 <span class="category_bg bank"></span>
                 은행
             </li>
-            <li id="MT1" data-order="1">
+            <li id="MT1" data-order="1" class="category">
                 <span class="category_bg mart"></span>
                 마트
             </li>
-            <li id="PM9" data-order="2">
+            <li id="PM9" data-order="2" class="category">
                 <span class="category_bg pharmacy"></span>
                 약국
             </li>
-            <li id="OL7" data-order="3">
+            <li id="OL7" data-order="3" class="category">
                 <span class="category_bg oil"></span>
                 주유소
             </li>
-            <li id="CE7" data-order="4">
+            <li id="CE7" data-order="4" class="category">
                 <span class="category_bg cafe"></span>
                 카페
             </li>
-            <li id="CS2" data-order="5">
+            <li id="CS2" data-order="5" class="category">
                 <span class="category_bg store"></span>
                 편의점
             </li>
@@ -164,6 +255,7 @@ eval($code);
 </div>
 <script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=<?php echo $appkey; ?>&libraries=services"></script>
 <script type="text/javascript">
+
     // 마커를 클릭했을 때 해당 장소의 상세정보를 보여줄 커스텀오버레이입니다
     let placeOverlay = new daum.maps.CustomOverlay({zIndex:1}),
         contentNode = document.createElement('div'), // 커스텀 오버레이의 컨텐츠 엘리먼트 입니다
@@ -173,7 +265,7 @@ eval($code);
     let mapContainer = document.getElementById('map'), // 지도를 표시할 div
         mapOption = {
             center: new daum.maps.LatLng(<?php echo $promisePoint['y'] . ', ' . $promisePoint['x']; ?>), // 지도의 중심좌표
-            level: 4 // 지도의 확대 레벨
+            level: 5 // 지도의 확대 레벨
         };
 
     // 지도를 생성합니다
@@ -204,7 +296,36 @@ eval($code);
     let geocoder = new daum.maps.services.Geocoder();
 
 
-    let marker = new daum.maps.Marker(), // 클릭한 위치를 표시할 마커입니다
+
+
+
+    /* 역 정보를 지도에 표시하는 코드 */
+    var imageSrc = 'http://ch4n3.tk:8080/map/marker/station.png', // 마커이미지의 주소입니다
+        imageSize = new daum.maps.Size(48, 64), // 마커이미지의 크기입니다
+        imageOption = {offset: new daum.maps.Point(27, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+
+    // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
+    var markerImage = new daum.maps.MarkerImage(imageSrc, imageSize, imageOption),
+        markerPosition = new daum.maps.LatLng(<?php echo $closeStationPoint['y'] ?>,
+            <?php echo $closeStationPoint['x'] ?>); // 마커가 표시될 위치입니다
+
+    // 마커를 생성합니다
+    var marker = new daum.maps.Marker({
+        position: markerPosition,
+        image: markerImage // 마커이미지 설정
+    });
+
+    // 마커가 지도 위에 표시되도록 설정합니다
+    marker.setMap(map);
+
+    /* 역 정보를 지도에 표시하는 코드 */
+
+
+
+
+
+
+    let marker1 = new daum.maps.Marker(), // 클릭한 위치를 표시할 마커입니다
         infowindow = new daum.maps.InfoWindow({zindex:1}); // 클릭한 위치에 대한 주소를 표시할 인포윈도우입니다
     // 현재 지도 중심좌표로 주소를 검색해서 지도 좌측 상단에 표시합니다
 
@@ -411,6 +532,63 @@ eval($code);
             map.setCenter(coords);
         }
     });
+
+
+    /*
+    약속 장소와 입력된 위치까지의 거리를 구하는 코드
+     */
+
+    // 클릭한 위치를 기준으로 선을 생성하고 지도위에 표시합니다
+    clickLine = new daum.maps.Polyline({
+        map: map, // 선을 표시할 지도입니다
+        path: [clickPosition], // 선을 구성하는 좌표 배열입니다 클릭한 위치를 넣어줍니다
+        strokeWeight: 3, // 선의 두께입니다
+        strokeColor: '#db4040', // 선의 색깔입니다
+        strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
+        strokeStyle: 'solid' // 선의 스타일입니다
+    });
+
+    let linePath = [
+
+        <?php
+
+        $positionCount = count($addresses);
+        $points = [];
+
+        for ($i = 0; $i < $positionCount; $i++) {
+            $points[$i] = addressToPoint($addresses[$i]);
+        }
+
+        for ($i = 0; $i < $positionCount; $i++){
+            echo "new daum.maps.LatLng(";
+            echo $points[$i]['y'];
+            echo ", ";
+            echo $points[$i]['x'];
+            echo "),";
+        }
+
+        ?>
+    ];
+
+    var polyline = new daum.maps.Polyline({
+        path: linePath, // 선을 구성하는 좌표배열 입니다
+        strokeWeight: 5, // 선의 두께 입니다
+        strokeColor: '#FFAE00', // 선의 색깔입니다
+        strokeOpacity: 0.7, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+        strokeStyle: 'solid' // 선의 스타일입니다
+    });
+
+    // 선이 그려지고 있을 때 마우스 움직임에 따라 선이 그려질 위치를 표시할 선을 생성합니다
+    moveLine = new daum.maps.Polyline({
+        strokeWeight: 3, // 선의 두께입니다
+        strokeColor: '#db4040', // 선의 색깔입니다
+        strokeOpacity: 0.5, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
+        strokeStyle: 'solid' // 선의 스타일입니다
+    });
+
+    // 클릭한 지점에 대한 정보를 지도에 표시합니다
+    displayCircleDot(clickPosition, 0);
+
 
 </script>
 </body>
