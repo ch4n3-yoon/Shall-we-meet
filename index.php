@@ -119,9 +119,15 @@ eval($code);
         </ul>
     </div>
 
+    <hr>
     <div class="restaurant">
-
+        <p style="font-size: 2em;">
+            <img src="https://s3.namuwikiusercontent.com/s/ce9d6ee43b9fa3b8bc5828cf7d36e040cf8f1a66796e2a28b2552e67cf3d02ee55ca57531f25eb3dc9aba3d0e6f4b3ddff62e515120538e0a56ec7daaea1ee95031ad8062e1f9634765f293771815d501d656584baa08d07271b16de5673b6e2">
+            <br>
+            여러분의 관심사와 흥미를 빅데이터로 분석하여 가장 높은 선호도를 이끌어낼 만한 맛집을 도출했습니다
+        </p>
     </div>
+
 </div>
 <script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=<?php echo $appkey; ?>&libraries=services"></script>
 <script type="text/javascript">
@@ -441,25 +447,6 @@ eval($code);
     });
 
 
-    // 입력된 장소와 약속 장소를 Polyline으로 연결해주는 코드
-    function connectToPromisePoint(points) {
-        let promisePoint = new daum.maps.LatLng(<?php echo $promisePoint['y'] . ', ' . $promisePoint['x']; ?>);
-
-        for (let i = 0; i < points.length; i++) {
-            new daum.maps.Polyline({
-                map: map, // 선을 표시할 지도입니다
-                path: [promisePoint, points[i]], // 선을 구성하는 좌표 배열입니다 클릭한 위치를 넣어줍니다
-                strokeWeight: 3, // 선의 두께입니다
-                strokeColor: '#5cdb54', // 선의 색깔입니다
-                strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
-                strokeStyle: 'solid' // 선의 스타일입니다
-            });
-        }
-    }
-
-    connectToPromisePoint(selectedPoints);
-
-
     function showDistance(content, position) {
 
         if (distanceOverlay) { // 커스텀오버레이가 생성된 상태이면
@@ -482,12 +469,12 @@ eval($code);
         }
     }
 
-    
+
     // 선택된 장소에 동그라미를 그리는 코드
     function displayCircleDot(position, distance) {
 
         // 클릭 지점을 표시할 빨간 동그라미 커스텀오버레이를 생성합니다
-        var circleOverlay = new daum.maps.CustomOverlay({
+        let circleOverlay = new daum.maps.CustomOverlay({
             content: '<span class="dot"></span>',
             position: position,
             zIndex: 1
@@ -499,7 +486,7 @@ eval($code);
         if (distance > 0) {
             // 클릭한 지점까지의 그려진 선의 총 거리를 표시할 커스텀 오버레이를 생성합니다
             var distanceOverlay = new daum.maps.CustomOverlay({
-                content: '<div class="dotOverlay">거리 <span class="number">' + distance + '</span>m</div>',
+                content: '<div class="dotOverlay">거리<br><span class="number">' + distance + '</span>km</div>',
                 position: position,
                 yAnchor: 1,
                 zIndex: 2
@@ -508,13 +495,30 @@ eval($code);
             // 지도에 표시합니다
             distanceOverlay.setMap(map);
         }
-
-        // 배열에 추가합니다
-        // dots.push({circle:circleOverlay, distance: distanceOverlay});
     }
 
-    
 
+    // 입력된 장소와 약속 장소를 Polyline으로 연결해주는 코드
+    function connectToPromisePoint(points) {
+        let promisePoint = new daum.maps.LatLng(<?php echo $promisePoint['y'] . ', ' . $promisePoint['x']; ?>);
+
+        for (let i = 0; i < points.length; i++) {
+            let distanceLine = new daum.maps.Polyline({
+                map: map, // 선을 표시할 지도입니다
+                path: [promisePoint, points[i]], // 선을 구성하는 좌표 배열입니다 클릭한 위치를 넣어줍니다
+                strokeWeight: 3, // 선의 두께입니다
+                strokeColor: '#5cdb54', // 선의 색깔입니다
+                strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
+                strokeStyle: 'solid' // 선의 스타일입니다
+            });
+
+            let distance = Math.round(distanceLine.getLength()) / 1000.0,
+                content = '<div class="dotOverlay distanceInfo">총거리 <span class="number">' + distance + '</span>km</div>'; // 커스텀오버레이에 추가될 내용입니다
+            displayCircleDot(selectedPoints[i], distance);
+        }
+    }
+
+    connectToPromisePoint(selectedPoints);
 
 
 </script>
@@ -549,7 +553,7 @@ eval($code);
         for (let i = 0; i < resultArray.length; i++) {
             let title = resultArray[i]['title'];
             let link = resultArray[i]['url'];
-            let temporary_code = `<div><h3><a href='${link}'>${title}</a></h3></div>`;
+            let temporary_code = `<div><h4><a href='${link}'>${title}</a></h4></div>`;
             html += temporary_code;
         }
 
