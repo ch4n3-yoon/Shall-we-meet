@@ -35,147 +35,13 @@ eval($code);
     <meta charset="UTF-8">
     <title>ㅇㄷ로가?</title>
 
-    <script src="//cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
-    <!--    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=--><?php //echo $clientId; ?><!--&submodules=geocoder"></script>-->
-    <!--    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=--><?php //echo $clientId; ?><!--&submodules=drawing"></script>-->
-    <style>
-        .container_local {
-            width: 88%;
-            margin: 0 auto;
-            margin-top: 1em;
-            margin-bottom: 20em;
-        }
-
-        .rainbow {
-            background-image: -webkit-gradient( linear, left top, right top, color-stop(0, #f22), color-stop(0.15, #f2f), color-stop(0.3, #22f), color-stop(0.45, #2ff), color-stop(0.6, #2f2),color-stop(0.75, #2f2), color-stop(0.9, #ff2), color-stop(1, #f22) );
-            background-image: gradient( linear, left top, right top, color-stop(0, #f22), color-stop(0.15, #f2f), color-stop(0.3, #22f), color-stop(0.45, #2ff), color-stop(0.6, #2f2),color-stop(0.75, #2f2), color-stop(0.9, #ff2), color-stop(1, #f22) );
-            color:transparent;
-            -webkit-background-clip: text;
-            background-clip: text;
-        }
-
-        .header {
-            margin-top: 3em;
-            margin-bottom: 3em;
-            color: red;
-            color: -webkit-linear-gradient(left,red,orange,yellow,green,blue,indigo,violet);
-            color: -o-linear-gradient(left,red,orange,yellow,green,blue,indigo,violet);
-            color: -moz-linear-gradient(left,red,orange,yellow,green,blue,indigo,violet);
-            color: linear-gradient(to right, red,orange,yellow,green,blue,indigo,violet);
-        }
-
-        .title {
-            font-family: 'Apple SD Gothic Neo', 'NanumGothic';
-            text-align: center;
-            text-decoration-style: double;
-
-        }
-
-        #map {
-            width: 100%;
-            height: 40em;
-            position:relative;
-            overflow:hidden;
-        }
-
-        .map_wrap, .map_wrap * {margin:0; padding:0;font-family:'Malgun Gothic',dotum,'돋움',sans-serif;font-size:12px;}
-        .map_wrap {position:relative;width:100%;height:350px;}
-        #category {position:absolute;top:10px;left:10px;border-radius: 5px; border:1px solid #909090;box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);background: #fff;overflow: hidden;z-index: 2;}
-        #category li {float:left;list-style: none;width:50px;px;border-right:1px solid #acacac;padding:6px 0;text-align: center; cursor: pointer;}
-        #category li.on {background: #eee;}
-        #category li:hover {background: #ffe6e6;border-left:1px solid #acacac;margin-left: -1px;}
-        #category li:last-child{margin-right:0;border-right:0;}
-        #category li span {display: block;margin:0 auto 3px;width:27px;height: 28px;}
-        #category li .category_bg {background:url(http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_category.png) no-repeat;}
-        #category li .bank {background-position: -10px 0;}
-        #category li .mart {background-position: -10px -36px;}
-        #category li .pharmacy {background-position: -10px -72px;}
-        #category li .oil {background-position: -10px -108px;}
-        #category li .cafe {background-position: -10px -144px;}
-        #category li .store {background-position: -10px -180px;}
-        #category li.on .category_bg {background-position-x:-46px;}
-        .placeinfo_wrap {position:absolute;bottom:28px;left:-150px;width:300px;}
-        .placeinfo {position:relative;width:100%;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd;padding-bottom: 10px;background: #fff;}
-        .placeinfo:nth-of-type(n) {border:0; box-shadow:0px 1px 2px #888;}
-        .placeinfo_wrap .after {content:'';position:relative;margin-left:-12px;left:50%;width:22px;height:12px;background:url('http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png')}
-        .placeinfo a, .placeinfo a:hover, .placeinfo a:active{color:#fff;text-decoration: none;}
-        .placeinfo a, .placeinfo span {display: block;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;}
-        .placeinfo span {margin:5px 5px 0 5px;cursor: default;font-size:13px;}
-        .placeinfo .title {font-weight: bold; font-size:14px;border-radius: 6px 6px 0 0;margin: -1px -1px 0 -1px;padding:10px; color: #fff;background: #d95050;background: #d95050 url(http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png) no-repeat right 14px center;}
-        .placeinfo .tel {color:#0f7833;}
-        .placeinfo .jibun {color:#999;font-size:11px;margin-top:0;}
-
-        ::selection {
-            background: rgb(182,223,241);
-            color: inherit;
-            text-shadow: none;
-        }
-        ::-moz-selection {
-            background: rgb(182,223,241);
-            color: inherit;
-            text-shadow: none;
-        }
-        ::-webkit-selection {
-            background: rgb(182,223,241);
-            color: inherit;
-            text-shadow: none;
-        }
-        
-        .gungseo {
-            font-family: '궁서';
-            font-size: 2em;
-        }
-
-
-        .menu {
-            position: -webkit-sticky; /* Safari */
-            position: sticky;
-            top: 0;
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-color: #333;
-        }
-
-        .active {
-            background-color: #4CAF50;
-        }
-
-
-        .nav-li {
-            float: left;
-        }
-
-        .nav-li a.nav-a {
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 14px 16px;
-            text-decoration: none;
-        }
-
-        /* Change the link color to #111 (black) on hover */
-        .nav-li a.nav-a:hover {
-            background-color: #111;
-        }
-
-        .print-points {
-            margin-top: 3em;
-        }
-
-        .white-font {
-            color: white;
-        }
-
-    </style>
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css">
-    <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-
-    <!-- Compiled and minified JavaScript -->
+    <script src="//cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="/map/assets/css/index.css">
+
 </head>
 <body>
 <div class="container_local">
@@ -185,7 +51,7 @@ eval($code);
         <h1 align="center"><b class="rainbow gungseo">어디로가 써-비쓰</b></h1>
     </div>
 
-    <ul class="menu" style="z-index: 1;">
+    <ul class="menu" style="z-index: 100;">
         <li class="nav-li active"><a class="nav-a" href="default.asp">어디로가?</a></li>
         <li class="nav-li"><a class="nav-a" href="news.asp">설립 이념</a></li>
         <li class="nav-li"><a class="nav-a" href="contact.asp">알고리즘</a></li>
@@ -252,6 +118,10 @@ eval($code);
             </li>
         </ul>
     </div>
+
+    <div class="restaurant">
+
+    </div>
 </div>
 <script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=<?php echo $appkey; ?>&libraries=services"></script>
 <script type="text/javascript">
@@ -265,7 +135,7 @@ eval($code);
     let mapContainer = document.getElementById('map'), // 지도를 표시할 div
         mapOption = {
             center: new daum.maps.LatLng(<?php echo $promisePoint['y'] . ', ' . $promisePoint['x']; ?>), // 지도의 중심좌표
-            level: 5 // 지도의 확대 레벨
+            level: 10 // 지도의 확대 레벨
         };
 
     // 지도를 생성합니다
@@ -300,17 +170,17 @@ eval($code);
 
 
     /* 역 정보를 지도에 표시하는 코드 */
-    var imageSrc = 'http://ch4n3.tk:8080/map/marker/station.png', // 마커이미지의 주소입니다
+    let imageSrc = 'http://ch4n3.tk:8080/map/marker/station.png', // 마커이미지의 주소입니다
         imageSize = new daum.maps.Size(48, 64), // 마커이미지의 크기입니다
         imageOption = {offset: new daum.maps.Point(27, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
 
     // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
-    var markerImage = new daum.maps.MarkerImage(imageSrc, imageSize, imageOption),
+    let markerImage = new daum.maps.MarkerImage(imageSrc, imageSize, imageOption),
         markerPosition = new daum.maps.LatLng(<?php echo $closeStationPoint['y'] ?>,
             <?php echo $closeStationPoint['x'] ?>); // 마커가 표시될 위치입니다
 
     // 마커를 생성합니다
-    var marker = new daum.maps.Marker({
+    let marker = new daum.maps.Marker({
         position: markerPosition,
         image: markerImage // 마커이미지 설정
     });
@@ -318,12 +188,9 @@ eval($code);
     // 마커가 지도 위에 표시되도록 설정합니다
     marker.setMap(map);
 
+
+
     /* 역 정보를 지도에 표시하는 코드 */
-
-
-
-
-
 
     let marker1 = new daum.maps.Marker(), // 클릭한 위치를 표시할 마커입니다
         infowindow = new daum.maps.InfoWindow({zindex:1}); // 클릭한 위치에 대한 주소를 표시할 인포윈도우입니다
@@ -509,7 +376,7 @@ eval($code);
 
     // 주소로 좌표를 검색합니다
     // 만날 장소를 Marker를 사용해서 표시해줍니다.
-    geocoder.addressSearch('<?php echo pointToAddress($promisePoint); ?>', function(result, status) {
+    geocoder.addressSearch('<?php echo pointToAddress($promisePoint); ?>', async (result, status) => {
 
         // 정상적으로 검색이 완료됐으면
         if (status === daum.maps.services.Status.OK) {
@@ -523,7 +390,7 @@ eval($code);
             });
 
             // 인포윈도우로 장소에 대한 설명을 표시합니다
-            var infowindow = new daum.maps.InfoWindow({
+            let infowindow = new daum.maps.InfoWindow({
                 content: '<div style="width:150px;text-align:center;padding:6px 0;">여기서만나!</div>'
             });
             infowindow.open(map, marker);
@@ -534,23 +401,12 @@ eval($code);
     });
 
 
+
     /*
-    약속 장소와 입력된 위치까지의 거리를 구하는 코드
-     */
+    입력한 장소들을 Polyline으로 연결해주는 코드.
+    */
 
-    // 클릭한 위치를 기준으로 선을 생성하고 지도위에 표시합니다
-    clickLine = new daum.maps.Polyline({
-        map: map, // 선을 표시할 지도입니다
-        path: [clickPosition], // 선을 구성하는 좌표 배열입니다 클릭한 위치를 넣어줍니다
-        strokeWeight: 3, // 선의 두께입니다
-        strokeColor: '#db4040', // 선의 색깔입니다
-        strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
-        strokeStyle: 'solid' // 선의 스타일입니다
-    });
-
-    let linePath = [
-
-        <?php
+    let selectedPoints = [<?php
 
         $positionCount = count($addresses);
         $points = [];
@@ -562,34 +418,147 @@ eval($code);
         for ($i = 0; $i < $positionCount; $i++){
             echo "new daum.maps.LatLng(";
             echo $points[$i]['y'];
-            echo ", ";
+            echo ",";
             echo $points[$i]['x'];
             echo "),";
         }
 
-        ?>
-    ];
+        echo "new daum.maps.LatLng(";
+        echo $points[0]['y'];
+        echo ',';
+        echo $points[0]['x'];
+        echo '),';
 
-    var polyline = new daum.maps.Polyline({
-        path: linePath, // 선을 구성하는 좌표배열 입니다
-        strokeWeight: 5, // 선의 두께 입니다
-        strokeColor: '#FFAE00', // 선의 색깔입니다
-        strokeOpacity: 0.7, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
-        strokeStyle: 'solid' // 선의 스타일입니다
-    });
+        ?>];
 
-    // 선이 그려지고 있을 때 마우스 움직임에 따라 선이 그려질 위치를 표시할 선을 생성합니다
-    moveLine = new daum.maps.Polyline({
+    new daum.maps.Polyline({
+        map: map, // 선을 표시할 지도입니다
+        path: [selectedPoints], // 선을 구성하는 좌표 배열입니다 클릭한 위치를 넣어줍니다
         strokeWeight: 3, // 선의 두께입니다
         strokeColor: '#db4040', // 선의 색깔입니다
-        strokeOpacity: 0.5, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
+        strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
         strokeStyle: 'solid' // 선의 스타일입니다
     });
 
-    // 클릭한 지점에 대한 정보를 지도에 표시합니다
-    displayCircleDot(clickPosition, 0);
+
+    // 입력된 장소와 약속 장소를 Polyline으로 연결해주는 코드
+    function connectToPromisePoint(points) {
+        let promisePoint = new daum.maps.LatLng(<?php echo $promisePoint['y'] . ', ' . $promisePoint['x']; ?>);
+
+        for (let i = 0; i < points.length; i++) {
+            new daum.maps.Polyline({
+                map: map, // 선을 표시할 지도입니다
+                path: [promisePoint, points[i]], // 선을 구성하는 좌표 배열입니다 클릭한 위치를 넣어줍니다
+                strokeWeight: 3, // 선의 두께입니다
+                strokeColor: '#5cdb54', // 선의 색깔입니다
+                strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
+                strokeStyle: 'solid' // 선의 스타일입니다
+            });
+        }
+    }
+
+    connectToPromisePoint(selectedPoints);
+
+
+    function showDistance(content, position) {
+
+        if (distanceOverlay) { // 커스텀오버레이가 생성된 상태이면
+
+            // 커스텀 오버레이의 위치와 표시할 내용을 설정합니다
+            distanceOverlay.setPosition(position);
+            distanceOverlay.setContent(content);
+
+        } else { // 커스텀 오버레이가 생성되지 않은 상태이면
+
+            // 커스텀 오버레이를 생성하고 지도에 표시합니다
+            distanceOverlay = new daum.maps.CustomOverlay({
+                map: map, // 커스텀오버레이를 표시할 지도입니다
+                content: content,  // 커스텀오버레이에 표시할 내용입니다
+                position: position, // 커스텀오버레이를 표시할 위치입니다.
+                xAnchor: 0,
+                yAnchor: 0,
+                zIndex: 3
+            });
+        }
+    }
+
+    
+    // 선택된 장소에 동그라미를 그리는 코드
+    function displayCircleDot(position, distance) {
+
+        // 클릭 지점을 표시할 빨간 동그라미 커스텀오버레이를 생성합니다
+        var circleOverlay = new daum.maps.CustomOverlay({
+            content: '<span class="dot"></span>',
+            position: position,
+            zIndex: 1
+        });
+
+        // 지도에 표시합니다
+        circleOverlay.setMap(map);
+
+        if (distance > 0) {
+            // 클릭한 지점까지의 그려진 선의 총 거리를 표시할 커스텀 오버레이를 생성합니다
+            var distanceOverlay = new daum.maps.CustomOverlay({
+                content: '<div class="dotOverlay">거리 <span class="number">' + distance + '</span>m</div>',
+                position: position,
+                yAnchor: 1,
+                zIndex: 2
+            });
+
+            // 지도에 표시합니다
+            distanceOverlay.setMap(map);
+        }
+
+        // 배열에 추가합니다
+        // dots.push({circle:circleOverlay, distance: distanceOverlay});
+    }
+
+    
+
 
 
 </script>
+
+
+
+<!-- 맛집을 검색하기 위한 스크립트 코드 -->
+<script type="text/javascript">
+
+    let address = "<?php echo pointToAddress($promisePoint); ?>";
+
+    let parseAddress = async (address) => {
+        let addressArray = address.split(' ');
+        addressArray[addressArray.length - 1] = '';
+        return addressArray.join(' ');
+    };
+
+    let search = async (query) => {
+        const xhr = new XMLHttpRequest();
+        const url = '/map/lib/daumWebSearch.php';
+        let params = '?query='+query;
+        await xhr.open('GET', url+params, false);
+        await xhr.send(params);
+        return JSON.parse(xhr.response);
+    };
+
+    let main = async () => {
+        let html = '';
+
+        let resultArray = (await search(await parseAddress(address) + "맛집"))['documents'];
+
+        for (let i = 0; i < resultArray.length; i++) {
+            let title = resultArray[i]['title'];
+            let link = resultArray[i]['url'];
+            let temporary_code = `<div><h3><a href='${link}'>${title}</a></h3></div>`;
+            html += temporary_code;
+        }
+
+        $('.restaurant').append(html);
+    };
+
+    main();
+
+</script>
+
 </body>
 </html>
